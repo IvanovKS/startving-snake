@@ -4,9 +4,28 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Starving snake</title>
-  <!-- <link type="image/x-icon" href="./img/icon.ico" rel="shortcut icon"> -->
+  <link type="image/x-icon" href="./img/snake.ico" rel="shortcut icon">
 </head>
 <body>
-
+  <div class="wrapper">
+    <div class="container">
+      <main class="main">
+        <section class="tools">
+          <div class="score">
+            <div class="score-img"></div>
+            <p>x</p>
+            <p class="score-value">123</p>
+          </div>
+          <div class="tools-buttons">
+            <button class="restart"></button>
+            <button class="volume"></button>
+          </div>
+        </section>
+        <section class="board">
+          <canvas id="canvas" width="920" height="520"></canvas>
+        </section>
+      </main>
+    </div>
+  </div>
 </body>
 </html>
