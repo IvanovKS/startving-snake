@@ -8,3 +8,7 @@
   justify-content: $jc;
   align-items: $ai;
 }
+@mixin size($h, $w) {
+  height: $h;
+  width: $w;
+}
