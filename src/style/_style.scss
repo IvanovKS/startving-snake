@@ -17,16 +17,16 @@ body {
       // display: none;
       position: absolute;
       flex-direction: column;
-      @include size(200px, 100%);
+      @include size(300px, 100%);
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      p {
+      h1 {
         @include font("Kalam", 6.2rem, 700);
         letter-spacing: 5px;
         animation: 6s colors infinite;
       }
-      button {
+      .play {
         @include size(50px, 150px);
         background-color: $dark-green;
         border-radius: 10px;
@@ -34,12 +34,32 @@ body {
         @include font("Kalam", 2.2rem, 400);
         cursor: pointer;
       }
-      button:hover {
+      .play:hover {
         background-color: $light-green;
       }
-      button:active {
+      .play:active {
         background-color: $darkest-green;
         color: white;
+      }
+      .volume {
+        @include size(48px, 48px);
+        background: url("img/volume_up.svg");
+        background-size:cover;
+        transition: .2s ease-in-out;
+      }
+      .volume:hover {
+        transform: scale(1.2);
+        transition: .2s ease-in-out;
+      }
+      .mute {
+        @include size(48px, 48px);
+        background: url("img/volume_mute.svg");
+        background-size:cover;
+        transition: .2s ease-in-out;
+      }
+      .mute:hover {
+        transform: scale(1.2);
+        transition: .2s ease-in-out;
       }
     }
     .main {
@@ -71,9 +91,17 @@ body {
           .score-value {
             @include font("Kalam", 3.2rem, 400);
           }
+          .winner-value {
+            @include font("Kalam", 3.2rem, 400);
+          }
+          .winner-img {
+            @include size(100%, 50px);
+            background: url("img/winner.svg");
+            background-size:cover;
+          }
         }
         .tools-buttons {
-          @include size(100%, 130px);
+          @include size(100%, 48px);
           @include flex(flex, space-between, center);
           .restart {
             @include size(48px, 48px);
@@ -82,16 +110,6 @@ body {
             transition: .2s ease-in-out;
           }
           .restart:hover {
-            transform: scale(1.2);
-            transition: .2s ease-in-out;
-          }
-          .volume {
-            @include size(48px, 48px);
-            background: url("img/volume_up.svg");
-            background-size:cover;
-            transition: .2s ease-in-out;
-          }
-          .volume:hover {
             transform: scale(1.2);
             transition: .2s ease-in-out;
           }

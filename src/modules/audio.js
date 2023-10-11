@@ -1,11 +1,15 @@
 import audioFood from '../audio/eatingFood.mp3';
 import gameOver from '../audio/gameOver.mp3';
+import bg from '../audio/bg.mp3';
 
 const audioEating = new Audio(audioFood);
 const endOfGame = new Audio(gameOver);
-endOfGame.volume = 0.6;
+const backgroundAudio = new Audio(bg);
+endOfGame.volume = 0.2;
 audioEating.volume = 0.6;
+backgroundAudio.volume = 0.1;
+backgroundAudio.loop = true;
 
-const audioArr = [audioEating, endOfGame];
+const audioArr = [audioEating, endOfGame, backgroundAudio];
 
 export default audioArr;
