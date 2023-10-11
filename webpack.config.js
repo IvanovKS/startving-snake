@@ -57,6 +57,17 @@ module.exports = {
           },
         },
       },
+      {
+        test: /\.(mp3|wav|ogg)$/i,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: 'audio/[name].[ext]', // Это опционально, вы можете настроить путь и имя файла по своему усмотрению.
+            },
+          },
+        ],
+      },
     ],
   },
 };

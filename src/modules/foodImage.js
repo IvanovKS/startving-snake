@@ -1,4 +1,4 @@
-class FoodImage {
+export class FoodImage {
   constructor(arr, x, y) {
     this.arr = arr;
     this.x = x;
@@ -11,4 +11,12 @@ class FoodImage {
   }
 }
 
-export default FoodImage;
+export function generateFoodCoordinates(body, func, width, height) {
+  let foodX;
+  let foodY;
+  do {
+    foodX = func(width);
+    foodY = func(height);
+  } while (body.some((segment) => segment.x === foodX && segment.y === foodY));
+  return { x: foodX, y: foodY };
+}
