@@ -9,16 +9,32 @@
 <body>
   <div class="wrapper">
     <div class="container">
+      <section class="welcome">
+        <h1>Starving snake</h1>
+        <button class="play">Play</button>
+        <button class="volume"></button>
+      </section>
+      <section class="modal">
+        <p>Use <span>Up</span>, <span>Left</span>, <span>Down</span>, <span>Right</span> on your keyboard to move the snake</p>
+      </section>
+      <section class="modal-end">
+        <p>Game over!</p>
+      </section>
       <main class="main">
         <section class="tools">
           <div class="score">
             <div class="score-img"></div>
             <p>x</p>
-            <p class="score-value">123</p>
+            <p class="score-value">0</p>
+          </div>
+          <div class="score">
+            <div class="winner-img"></div>
+            <p>x</p>
+            <p class="winner-value">0</p>
           </div>
           <div class="tools-buttons">
             <button class="restart"></button>
-            <button class="volume"></button>
+            <!-- <button class="volume"></button> -->
           </div>
         </section>
         <section class="board">

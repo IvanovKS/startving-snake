@@ -1,41 +1,145 @@
 import '@babel/polyfill';
 import './index.html';
 import './index.scss';
-import banana from './img/banana.png';
-import cherries from './img/cherries.png';
-import grape from './img/grape.png';
-import pear from './img/pear.png';
-import plum from './img/plum.png';
-import orange from './img/orange.png';
-import mango from './img/mango.png';
-import watermelon from './img/watermelon.png';
-import apple from './img/apple_.png';
-import peach from './img/peach.png';
-import pineapple from './img/pineapple.png';
-import strawberry from './img/strawberry.png';
-import Food from './modules/food';
+import { FoodImage, generateFoodCoordinates } from './modules/foodImage';
+import fruitsArr from './modules/arrays';
+import { snake, eatTail, winner } from './modules/snake';
+import audioArr from './modules/audio';
 
-const fruitsArr = [
-  banana, cherries, grape, pear, plum, orange,
-  mango, watermelon, apple, peach, pineapple, strawberry];
+// * Take the elements-------------------------------------------------------------
+const CANVAS = document.querySelector('#canvas');
+const SCORE_VALUE = document.querySelector('.score-value');
+const WINNER_VALUE = document.querySelector('.winner-value');
+const RESTART = document.querySelector('.restart');
+const PLAY = document.querySelector('.welcome button');
+const WELCOME_SECTION = document.querySelector('.welcome');
+const MAIN_SECTION = document.querySelector('.main');
+const VOLUME = document.querySelector('.volume');
+const RULES = document.querySelector('.modal');
+const GAME_OVER = document.querySelector('.modal-end');
 
-const canvas = document.querySelector('#canvas');
-const ctx = canvas.getContext('2d');
+// * Variables---------------------------------------------------------------------
+const ctx = CANVAS.getContext('2d');
+const box = 40;
+const squareWidth = 22;
+const squareHeight = 12;
+const randomCoord = (num) => Math.floor((Math.random() * num + 1)) * box;
+const game = setInterval(drawGame, 100);
 
-const currentFood = new Food(fruitsArr);
+let isMuted = false;
+let currentFood = new FoodImage(fruitsArr, randomCoord(squareWidth), randomCoord(squareHeight));
 
-const foodImg = new Image();
+let foodImg = new Image();
 foodImg.src = currentFood.getRandomFood();
 
-const box = 40;
+let score = 0;
+let dir;
 
-const food = {
-  x: Math.floor((Math.random() * 22 + 1)) * box,
-  y: Math.floor((Math.random() * 12 + 1)) * box,
-};
-
-function drawGame() {
-  ctx.drawImage(foodImg, food.x, food.y, box, box);
+// * Extra functions---------------------------------------------------------------
+function mute(audio, arr) {
+  if (audio) {
+    arr.forEach((el) => {
+      el.volume = 0;
+    });
+  }
+}
+function direction(event) {
+  mute(isMuted, audioArr);
+  RULES.style.display = 'none';
+  if (MAIN_SECTION.style.display === 'flex') {
+    audioArr[2].play();
+    if (event.keyCode === 37 && dir !== 'right') {
+      dir = 'left';
+    } else if (event.keyCode === 38 && dir !== 'down') {
+      dir = 'up';
+    } else if (event.keyCode === 39 && dir !== 'left') {
+      dir = 'right';
+    } else if (event.keyCode === 40 && dir !== 'up') {
+      dir = 'down';
+    }
+  }
 }
 
-setInterval(drawGame, 100);
+function gameOver() {
+  GAME_OVER.style.display = 'block';
+}
+
+// * Events------------------------------------------------------------------------
+document.addEventListener('keydown', direction);
+
+WINNER_VALUE.textContent = localStorage.getItem('winner');
+
+PLAY.addEventListener('click', () => {
+  WELCOME_SECTION.style.display = 'none';
+  MAIN_SECTION.style.display = 'flex';
+  audioArr[3].play();
+  mute(isMuted, audioArr);
+  RULES.style.display = 'block';
+});
+
+VOLUME.addEventListener('click', (event) => {
+  audioArr[3].play();
+  event.target.classList.toggle('mute');
+  isMuted = event.target.classList.contains('mute');
+});
+
+RESTART.addEventListener('click', () => {
+  location.reload();
+});
+
+// * Main function-----------------------------------------------------------------
+function drawGame() {
+  ctx.clearRect(0, 0, CANVAS.width, CANVAS.height);
+  ctx.drawImage(foodImg, currentFood.x, currentFood.y, box, box);
+
+  for (let i = 0; i < snake.length; i += 1) {
+    ctx.fillStyle = i === 0 ? 'black' : '#6e6e6e';
+    ctx.fillRect(snake[i].x, snake[i].y, box, box);
+  }
+
+  let snakeX = snake[0].x;
+  let snakeY = snake[0].y;
+
+  if (snakeX < 0 || snakeX > squareWidth * box || snakeY < 0 || snakeY > squareHeight * box) {
+    clearInterval(game);
+    audioArr[1].play();
+    audioArr[2].pause();
+    gameOver();
+  }
+
+  if (dir === 'left') snakeX -= box;
+  if (dir === 'right') snakeX += box;
+  if (dir === 'up') snakeY -= box;
+  if (dir === 'down') snakeY += box;
+
+  if (snakeX === currentFood.x && snakeY === currentFood.y) {
+    score += 1;
+    setTimeout(() => {
+      SCORE_VALUE.textContent = score;
+      audioArr[0].play();
+    }, 100);
+
+    const newFoodCoord = generateFoodCoordinates(snake, randomCoord, squareWidth, squareHeight);
+
+    const newX = newFoodCoord.x;
+    const newY = newFoodCoord.y;
+
+    currentFood = new FoodImage(fruitsArr, newX, newY);
+
+    foodImg = new Image();
+    foodImg.src = currentFood.getRandomFood();
+    currentFood.x = newX;
+    currentFood.y = newY;
+  } else {
+    snake.pop();
+  }
+
+  const newHead = {
+    x: snakeX,
+    y: snakeY,
+  };
+  eatTail(newHead, snake, game, audioArr[1], audioArr[2], gameOver);
+
+  snake.unshift(newHead);
+  winner(SCORE_VALUE.textContent, WINNER_VALUE.textContent);
+}
