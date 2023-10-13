@@ -62,6 +62,43 @@ body {
         transition: .2s ease-in-out;
       }
     }
+    .modal {
+      text-align: center;
+      width: 80%;
+      position: absolute;
+      display: none;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 2;
+      p {
+        @include font("Kalam", 2.2rem, 400);
+        background-color: white;
+        padding: 10px;
+        box-shadow: 0px 0px 15px 5px $darkest-green;
+        span {
+          @include font("Kalam", 2.8rem, 400);
+          animation: 4s colors infinite;
+        }
+      }
+    }
+    .modal-end {
+      text-align: center;
+      width: 80%;
+      position: absolute;
+      display: none;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 2;
+      p {
+        @include font("Kalam", 2.8rem, 400);
+        animation: 4s colors infinite;
+        background-color: white;
+        padding: 10px;
+        box-shadow: 0px 0px 15px 5px $darkest-green;
+      }
+    }
     .main {
       // @include flex(flex, space-between, center);
       display: none;
@@ -73,6 +110,7 @@ body {
       transform: translate(-50%, -50%);
       background-color:$dark-green;
       box-shadow: 0px 0px 15px 10px $darkest-green;
+      z-index: 1;
       .tools {
         @include size(80px, 100%);
         @include flex(flex, space-between, center);

@@ -6,6 +6,7 @@ import fruitsArr from './modules/arrays';
 import { snake, eatTail, winner } from './modules/snake';
 import audioArr from './modules/audio';
 
+// * Take the elements-------------------------------------------------------------
 const CANVAS = document.querySelector('#canvas');
 const SCORE_VALUE = document.querySelector('.score-value');
 const WINNER_VALUE = document.querySelector('.winner-value');
@@ -14,16 +15,27 @@ const PLAY = document.querySelector('.welcome button');
 const WELCOME_SECTION = document.querySelector('.welcome');
 const MAIN_SECTION = document.querySelector('.main');
 const VOLUME = document.querySelector('.volume');
+const RULES = document.querySelector('.modal');
+const GAME_OVER = document.querySelector('.modal-end');
 
-WINNER_VALUE.textContent = localStorage.getItem('winner');
-
-PLAY.addEventListener('click', () => {
-  WELCOME_SECTION.style.display = 'none';
-  MAIN_SECTION.style.display = 'flex';
-});
+// * Variables---------------------------------------------------------------------
+const ctx = CANVAS.getContext('2d');
+const box = 40;
+const squareWidth = 22;
+const squareHeight = 12;
+const randomCoord = (num) => Math.floor((Math.random() * num + 1)) * box;
+const game = setInterval(drawGame, 100);
 
 let isMuted = false;
+let currentFood = new FoodImage(fruitsArr, randomCoord(squareWidth), randomCoord(squareHeight));
 
+let foodImg = new Image();
+foodImg.src = currentFood.getRandomFood();
+
+let score = 0;
+let dir;
+
+// * Extra functions---------------------------------------------------------------
 function mute(audio, arr) {
   if (audio) {
     arr.forEach((el) => {
@@ -31,33 +43,9 @@ function mute(audio, arr) {
     });
   }
 }
-
-VOLUME.addEventListener('click', (event) => {
-  event.target.classList.toggle('mute');
-  isMuted = event.target.classList.contains('mute');
-});
-
-RESTART.addEventListener('click', () => {
-  location.reload();
-});
-
-const ctx = CANVAS.getContext('2d');
-const box = 40;
-const squareWidth = 22;
-const squareHeight = 12;
-const randomCoord = (num) => Math.floor((Math.random() * num + 1)) * box;
-
-let currentFood = new FoodImage(fruitsArr, randomCoord(squareWidth), randomCoord(squareHeight));
-
-let foodImg = new Image();
-foodImg.src = currentFood.getRandomFood();
-
-let score = 0;
-
-let dir;
-
 function direction(event) {
   mute(isMuted, audioArr);
+  RULES.style.display = 'none';
   if (MAIN_SECTION.style.display === 'flex') {
     audioArr[2].play();
     if (event.keyCode === 37 && dir !== 'right') {
@@ -71,8 +59,35 @@ function direction(event) {
     }
   }
 }
+
+function gameOver() {
+  GAME_OVER.style.display = 'block';
+}
+
+// * Events------------------------------------------------------------------------
 document.addEventListener('keydown', direction);
 
+WINNER_VALUE.textContent = localStorage.getItem('winner');
+
+PLAY.addEventListener('click', () => {
+  WELCOME_SECTION.style.display = 'none';
+  MAIN_SECTION.style.display = 'flex';
+  audioArr[3].play();
+  mute(isMuted, audioArr);
+  RULES.style.display = 'block';
+});
+
+VOLUME.addEventListener('click', (event) => {
+  audioArr[3].play();
+  event.target.classList.toggle('mute');
+  isMuted = event.target.classList.contains('mute');
+});
+
+RESTART.addEventListener('click', () => {
+  location.reload();
+});
+
+// * Main function-----------------------------------------------------------------
 function drawGame() {
   ctx.clearRect(0, 0, CANVAS.width, CANVAS.height);
   ctx.drawImage(foodImg, currentFood.x, currentFood.y, box, box);
@@ -89,6 +104,7 @@ function drawGame() {
     clearInterval(game);
     audioArr[1].play();
     audioArr[2].pause();
+    gameOver();
   }
 
   if (dir === 'left') snakeX -= box;
@@ -122,10 +138,8 @@ function drawGame() {
     x: snakeX,
     y: snakeY,
   };
-  eatTail(newHead, snake, game, audioArr[1], audioArr[2]);
+  eatTail(newHead, snake, game, audioArr[1], audioArr[2], gameOver);
 
   snake.unshift(newHead);
   winner(SCORE_VALUE.textContent, WINNER_VALUE.textContent);
 }
-
-let game = setInterval(drawGame, 100);
